@@ -1,0 +1,58 @@
+{
+	"name": "sfk-studio",
+	"displayName": "Sfk.Studio",
+	"description": "",
+	"version": "1.0.0",
+	"engines": {
+		"vscode": "^1.43.0"
+	},
+	"publisher": "Divalto",
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:sfk.studio.goToDefinition"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "sfk.studio.goToDefinition",
+				"title": "Go To Definition"
+			}
+		],
+		"menus": {
+			"editor/context": [{
+				"when": "resourceExtname == .json",
+				"group": "navigation",
+				"command": "sfk.studio.goToDefinition"
+			}]
+		},
+		"keybindings":[{
+			"when": "resourceExtname == .json",
+			"key": "ctrl+f12",
+			"command": "sfk.studio.goToDefinition"
+		}]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.1",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.43.0",
+		"eslint": "^6.8.0",
+		"@typescript-eslint/parser": "^2.18.0",
+		"@typescript-eslint/eslint-plugin": "^2.18.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.0.1",
+		"typescript": "^3.7.5",
+		"vscode-test": "^1.3.0"
+	}
+}
