@@ -87,7 +87,8 @@ function getTargetFileName(currentFileName: string, propertyName: string, value:
 }
 function getTargetFileNameFromComponent(propertyName: string, value: string) {
 	switch (propertyName.toLowerCase()) {
-		case "datasource": return `${value}.datasource.json`;
+		case "datasource":
+		case "datasourcedefaultvalue": return `${value}.datasource.json`;
 		case "script": return `${value}.script.ts`;
 		case "template": return `${value}.template.html`;
 		case "target": return `${vscode.Uri.parse(value).path.substring(1)}.component.json`;
