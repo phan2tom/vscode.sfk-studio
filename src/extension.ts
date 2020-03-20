@@ -58,14 +58,36 @@ function goToDefinition(symbols: vscode.DocumentSymbol[] | undefined) {
 		return;
 	}
 
+	function getFileInfo(file: string) {
+		let envRegExp = /[\d.]+\\(Common|DeviceTypes)\\([^\\]+)/;
+		let m = file.match(envRegExp);
+		if (!m) {
+			return { environment: null, file: file };
+		}
+
+		return {
+			environment: m[1] === "Common" ? m[1] : m[2],
+			file: file
+		};
+	}
+
+	let currentFileInfo = getFileInfo(vscode.window.activeTextEditor.document.uri.fsPath);
 	vscode.workspace.findFiles(`**/${targetFileName}`)
 		.then(uris => {
 			if (uris && uris.length > 0) {
-				let f = uris[0];
-				vscode.workspace.openTextDocument(f.fsPath)
+				let fileInfos = uris.map(x => getFileInfo(x.fsPath));
+
+				let target = fileInfos.find(f => f.environment === currentFileInfo.environment);
+				if (!target) {
+					target = fileInfos.find(f => f.environment === "Common");
+				}
+
+				if (target) {
+					vscode.workspace.openTextDocument(target.file)
 					.then(doc => {
 						vscode.window.showTextDocument(doc);
 					});
+				}
 			}
 		});
 }
