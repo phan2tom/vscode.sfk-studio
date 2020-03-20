@@ -91,7 +91,7 @@ function getTargetFileNameFromComponent(propertyName: string, value: string) {
 		case "datasourcedefaultvalue": return `${value}.datasource.json`;
 		case "script": return `${value}.script.ts`;
 		case "template": return `${value}.template.html`;
-		case "target": return `${vscode.Uri.parse(value).path.substring(1)}.component.json`;
+		case "target": return getLinkTargetFileName(value);
 		case "name": return `${value}.condition.json`;
 		default: return undefined;
 	}
@@ -106,7 +106,7 @@ function getTargetFileNameFromDataSource(propertyName: string, value: string) {
 }
 function getTargetFileNameFromMenu(propertyName: string, value: string) {
 	switch (propertyName.toLowerCase()) {
-		case "target": return `${vscode.Uri.parse(value).path.substring(1)}.component.json`;
+		case "target": return getLinkTargetFileName(value);
 		default: return undefined;
 	}
 }
@@ -115,6 +115,19 @@ function getTargetFileNameFromSchema(propertyName: string, value: string) {
 		case "datasource": return `${value}.datasource.json`;
 		default: return undefined;
 	}
+}
+
+function getLinkTargetFileName(target: string) {
+	let uri = vscode.Uri.parse(target);
+	let pageName = uri.path.substr(1);
+	if (pageName.endsWith("/new")) {
+		pageName = pageName.replace(/\//, ".");
+	}
+	else if (pageName.endsWith("/")) {
+		pageName = `${pageName.substr(0, pageName.length - 1)}.id`;
+	}
+
+	return `${pageName}.component.json`;
 }
 
 function findCurrentPropertySymbol(symbols: vscode.DocumentSymbol[], currentRange: vscode.Range) {
