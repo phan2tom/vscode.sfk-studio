@@ -58,14 +58,36 @@ function goToDefinition(symbols: vscode.DocumentSymbol[] | undefined) {
 		return;
 	}
 
+	function getFileInfo(file: string) {
+		let envRegExp = /[\d.]+\\(Common|DeviceTypes)\\([^\\]+)/;
+		let m = file.match(envRegExp);
+		if (!m) {
+			return { environment: null, file: file };
+		}
+
+		return {
+			environment: m[1] === "Common" ? m[1] : m[2],
+			file: file
+		};
+	}
+
+	let currentFileInfo = getFileInfo(vscode.window.activeTextEditor.document.uri.fsPath);
 	vscode.workspace.findFiles(`**/${targetFileName}`)
 		.then(uris => {
 			if (uris && uris.length > 0) {
-				let f = uris[0];
-				vscode.workspace.openTextDocument(f.fsPath)
+				let fileInfos = uris.map(x => getFileInfo(x.fsPath));
+
+				let target = fileInfos.find(f => f.environment === currentFileInfo.environment);
+				if (!target) {
+					target = fileInfos.find(f => f.environment === "Common");
+				}
+
+				if (target) {
+					vscode.workspace.openTextDocument(target.file)
 					.then(doc => {
 						vscode.window.showTextDocument(doc);
 					});
+				}
 			}
 		});
 }
@@ -87,10 +109,11 @@ function getTargetFileName(currentFileName: string, propertyName: string, value:
 }
 function getTargetFileNameFromComponent(propertyName: string, value: string) {
 	switch (propertyName.toLowerCase()) {
-		case "datasource": return `${value}.datasource.json`;
+		case "datasource":
+		case "datasourcedefaultvalue": return `${value}.datasource.json`;
 		case "script": return `${value}.script.ts`;
 		case "template": return `${value}.template.html`;
-		case "target": return `${vscode.Uri.parse(value).path.substring(1)}.component.json`;
+		case "target": return getLinkTargetFileName(value);
 		case "name": return `${value}.condition.json`;
 		default: return undefined;
 	}
@@ -105,7 +128,7 @@ function getTargetFileNameFromDataSource(propertyName: string, value: string) {
 }
 function getTargetFileNameFromMenu(propertyName: string, value: string) {
 	switch (propertyName.toLowerCase()) {
-		case "target": return `${vscode.Uri.parse(value).path.substring(1)}.component.json`;
+		case "target": return getLinkTargetFileName(value);
 		default: return undefined;
 	}
 }
@@ -114,6 +137,19 @@ function getTargetFileNameFromSchema(propertyName: string, value: string) {
 		case "datasource": return `${value}.datasource.json`;
 		default: return undefined;
 	}
+}
+
+function getLinkTargetFileName(target: string) {
+	let uri = vscode.Uri.parse(target);
+	let pageName = uri.path.substr(1);
+	if (pageName.endsWith("/new")) {
+		pageName = pageName.replace(/\//, ".");
+	}
+	else if (pageName.endsWith("/")) {
+		pageName = `${pageName.substr(0, pageName.length - 1)}.id`;
+	}
+
+	return `${pageName}.component.json`;
 }
 
 function findCurrentPropertySymbol(symbols: vscode.DocumentSymbol[], currentRange: vscode.Range) {
