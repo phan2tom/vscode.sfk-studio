@@ -32,7 +32,15 @@
 			"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
 			"key": "ctrl+f12",
 			"command": "sfk.studio.goToDefinition"
-		}]
+		}],
+		"jsonValidation": [
+			{ "fileMatch": "*.component.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/component.json" },
+			{ "fileMatch": "*.condition.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/condition.json" },
+			{ "fileMatch": "*.datasource.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/datasource.json" },
+			{ "fileMatch": "*.menu.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/menu.json" },
+			{ "fileMatch": "*.projectsettings.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/projectsettings.json" },
+			{ "fileMatch": "*.schema.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/schema.json" }
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

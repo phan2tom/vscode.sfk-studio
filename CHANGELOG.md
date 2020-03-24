@@ -4,6 +4,7 @@ All notable changes to the "sfk-studio" extension will be documented in this fil
 ## [Unreleased]
 
 ### Added
+- [JsonSchema]: Configuration for JSON Validation & IntelliSense
 - [GoToDefinition]: Implementation for scripts
 
 ### Fixed
