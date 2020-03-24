@@ -135,6 +135,8 @@ function getTargetFileNameFromMenu(propertyName: string, value: string) {
 function getTargetFileNameFromSchema(propertyName: string, value: string) {
 	switch (propertyName.toLowerCase()) {
 		case "datasource": return `${value}.datasource.json`;
+		case "foreignconfigname": return `${value}.component.json`;
+		case "targettable": return `${value}.schema.json`;
 		default: return undefined;
 	}
 }
