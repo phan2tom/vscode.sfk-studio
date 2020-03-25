@@ -11,27 +11,29 @@
 		"Extension Packs"
 	],
 	"activationEvents": [
-		"onCommand:sfk.studio.goToDefinition"
+		"onCommand:sfk.studio.goToDefinitionConfiguration"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "sfk.studio.goToDefinition",
+				"command": "sfk.studio.goToDefinitionConfiguration",
 				"title": "Go To Definition"
 			}
 		],
 		"menus": {
-			"editor/context": [{
-				"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
-				"group": "navigation",
-				"command": "sfk.studio.goToDefinition"
-			}]
+			"editor/context": [
+				{
+					"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
+					"group": "navigation",
+					"command": "sfk.studio.goToDefinitionConfiguration"
+				}
+			]
 		},
 		"keybindings":[{
 			"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
 			"key": "ctrl+f12",
-			"command": "sfk.studio.goToDefinition"
+			"command": "sfk.studio.goToDefinitionConfiguration"
 		}],
 		"jsonValidation": [
 			{ "fileMatch": "*.component.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/component.json" },
