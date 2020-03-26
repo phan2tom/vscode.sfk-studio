@@ -6,7 +6,10 @@
 	"engines": {
 		"vscode": "^1.43.0"
 	},
-	"publisher": "Divalto",
+	"repository": {
+		"url": "https://github.com/phan2tom/vscode.sfk-studio.git"
+	},
+	"publisher": "divalto-ttp",
 	"categories": [
 		"Extension Packs"
 	],
