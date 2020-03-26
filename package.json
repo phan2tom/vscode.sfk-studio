@@ -11,13 +11,18 @@
 		"Extension Packs"
 	],
 	"activationEvents": [
-		"onCommand:sfk.studio.goToDefinitionConfiguration"
+		"onCommand:sfk.studio.goToDefinitionConfiguration",
+		"onCommand:sfk.studio.goToDefinitionTypeScript"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "sfk.studio.goToDefinitionConfiguration",
+				"title": "Go To Definition"
+			},
+			{
+				"command": "sfk.studio.goToDefinitionTypeScript",
 				"title": "Go To Definition"
 			}
 		],
@@ -27,14 +32,26 @@
 					"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
 					"group": "navigation",
 					"command": "sfk.studio.goToDefinitionConfiguration"
+				},
+				{
+					"when": "resourceFilename =~ /\\.script(library)?\\.ts$/",
+					"group": "navigation",
+					"command": "sfk.studio.goToDefinitionTypeScript"
 				}
 			]
 		},
-		"keybindings":[{
-			"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
-			"key": "ctrl+f12",
-			"command": "sfk.studio.goToDefinitionConfiguration"
-		}],
+		"keybindings":[
+			{
+				"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
+				"key": "ctrl+f12",
+				"command": "sfk.studio.goToDefinitionConfiguration"
+			},
+			{
+				"when": "resourceFilename =~ /\\.script(library)?\\.ts$/",
+				"key": "ctrl+f12",
+				"command": "sfk.studio.goToDefinitionTypeScript"
+			}
+		],
 		"jsonValidation": [
 			{ "fileMatch": "*.component.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/component.json" },
 			{ "fileMatch": "*.condition.json",	"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/condition.json" },
