@@ -8,12 +8,23 @@ export default class GoToDefinitionConfiguration {
 			const activeTextEditor = vscode.window.activeTextEditor;
 			let symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>('vscode.executeDocumentSymbolProvider', activeTextEditor.document.uri);
 			if (symbols) {
-					new GoToDefinitionConfiguration().goToDefinition(activeTextEditor, symbols);
+					await new GoToDefinitionConfiguration().goToDefinition(activeTextEditor, symbols);
 			}
 		}
 	}
 
-	protected goToDefinition(activeTextEditor: vscode.TextEditor, symbols: vscode.DocumentSymbol[]) {
+	static filterCurrentDeviceType(currentDocument: vscode.Uri, targetDocuments: vscode.Uri[]) {
+		let currentFileInfo = new FileInfo(currentDocument);
+		let fileInfos = targetDocuments.map(uri => new FileInfo(uri));
+	
+		let target = fileInfos.find(f => f.environment === currentFileInfo.environment);
+		if (!target) {
+			target = fileInfos.find(f => f.environment === "Common");
+		}
+		return target?.uri;
+	}
+
+	protected async goToDefinition(activeTextEditor: vscode.TextEditor, symbols: vscode.DocumentSymbol[]) {
 		let currentPosition = activeTextEditor.selection.start;
 		let wordRange = activeTextEditor.document.getWordRangeAtPosition(currentPosition);
 		let propertySymbol = this.findCurrentPropertySymbol(symbols, wordRange);
@@ -31,28 +42,18 @@ export default class GoToDefinitionConfiguration {
 			return;
 		}
 		
-		let currentFileInfo = new FileInfo(activeTextEditor.document.uri.fsPath);
-		vscode.workspace.findFiles(`**/${targetFileName}`)
-			.then(uris => {
-				if (uris && uris.length > 0) {
-					let fileInfos = uris.map(x => new FileInfo(x.fsPath));
-	
-					let target = fileInfos.find(f => f.environment === currentFileInfo.environment);
-					if (!target) {
-						target = fileInfos.find(f => f.environment === "Common");
-					}
-	
-					if (target) {
-						vscode.workspace.openTextDocument(target.file)
-						.then(doc => {
-							vscode.window.showTextDocument(doc);
-						});
-					}
-				}
-				else {
-					vscode.window.showInformationMessage(`${targetFileName} not found`);
-				}
-			});	
+		let currentFileInfo = new FileInfo(activeTextEditor.document.uri);
+		let foundFiles = await vscode.workspace.findFiles(`**/${targetFileName}`);
+		if (foundFiles && foundFiles.length > 0) {
+			let target = GoToDefinitionConfiguration.filterCurrentDeviceType(activeTextEditor.document.uri, foundFiles);
+			if (target) {
+				let doc = await vscode.workspace.openTextDocument(target);
+				vscode.window.showTextDocument(doc);
+			}
+		}
+		else {
+			vscode.window.showInformationMessage(`${targetFileName} not found`);
+		}
 	}
 
 	private findCurrentPropertySymbol(symbols: vscode.DocumentSymbol[] | undefined, currentRange: vscode.Range | undefined) {
@@ -156,9 +157,11 @@ class FileInfo {
 	private envRegExp = /[\d.]+\\(Common|DeviceTypes)\\([^\\]+)/;
 
 	readonly environment: string | null = null;
+	readonly filePath: string | null = null;
 
-	constructor(public readonly file: string) {
-		let m = file.match(this.envRegExp);
+	constructor(public readonly uri: vscode.Uri) {
+		this.filePath = uri.fsPath;
+		let m = this.filePath.match(this.envRegExp);
 		if (m) {
 			this.environment = m[1] === "Common" ? m[1] : m[2];
 		}

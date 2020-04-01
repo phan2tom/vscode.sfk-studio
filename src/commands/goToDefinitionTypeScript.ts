@@ -1,55 +1,96 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+import GoToDefinitionConfiguration from './goToDefinitionConfiguration';
+
 export default class GoToDefinitionTypeScript {
 
-	static async execute() {
-		if (vscode.window.activeTextEditor !== undefined) {
-			const activeTextEditor = vscode.window.activeTextEditor;
-			new GoToDefinitionTypeScript().goToDefinition(activeTextEditor);
-		}
+	static async execute(document: vscode.TextDocument, position: vscode.Position) {
+			return await new GoToDefinitionTypeScript().goToDefinition(document, position);
 	}
 
-	protected goToDefinition(activeTextEditor: vscode.TextEditor) {
-		let line = activeTextEditor.document.lineAt(activeTextEditor.selection.active.line);
-
+	protected async goToDefinition(document: vscode.TextDocument, position: vscode.Position) {
+		let line = document.lineAt(position.line);
 		let m = line.text.match(/\$(?<service>\w+)\s*\.\s*(?<method>\w+)\s*\(\s*['"](?<firstArg>[^"']+)['"]/);
 		if (!m || !m.groups) {
-			return;
+			return undefined;
 		}
 
-		let target = this.getTarget(m.groups['service'], m.groups['method'], m.groups['firstArg']);
-		vscode.window.showInformationMessage(target);
+		let searchElement = this.getSearchElement(m.groups['service'], m.groups['method'], m.groups['firstArg']);
+		if (searchElement) {
+			let foundFiles = await vscode.workspace.findFiles(`**/${searchElement.pattern}`);
+			if (foundFiles && foundFiles.length > 0) {
+				if (searchElement instanceof SearchConfigPropertyValue) {
+					let searchProperty = searchElement;
+					let result = await Promise.all(
+						foundFiles.map(async (uri) => {
+							let d = await vscode.workspace.openTextDocument(uri);
+							let text = d.getText();
+							let index = text.search(new RegExp(`"${searchProperty.propertyName}"[ \s]*:[ \s]*"${searchProperty.value}"`, 'g'));
+							if (index > -1) {
+								return new vscode.Location(uri, d.positionAt(index));
+							}
+						})
+					);
+					return <vscode.Location[]>result.filter(r => r);
+				}
+				else {
+					let target = GoToDefinitionConfiguration.filterCurrentDeviceType(document.uri, foundFiles);
+					if (target) {
+						return new vscode.Location(target, new vscode.Position(0, 0));
+					}
+				}
+			}
+		}
+	}
+	private recursiveFindSymbol(propertyName: string, symbols: vscode.DocumentSymbol[]) {
+		let result = symbols.filter(s => s.name === propertyName);
+		symbols.forEach(s => result = [...result, ...this.recursiveFindSymbol(propertyName, s.children)]);
+		return result;
 	}
 
-	private getTarget(service: string, method: string, firstArg: string) {
+	private getSearchElement(service: string, method: string, firstArg: string) {
 		switch (service) {
-			case 'component': return this.getTargetComponent(method, firstArg);
-			case 'database': return this.getTargetDatabase(method, firstArg);
-			case 'library': return this.getTargetLibrary(method, firstArg);
-			default: return '';
+			case 'component': return this.getSearchElementForComponent(method, firstArg);
+			case 'database': return this.getSearchElementForDatabase(method, firstArg);
+			case 'library': return this.getSearchElementForLibrary(method, firstArg);
 		}
 	}
 
-	private getTargetComponent(method: string, firstArg: string) {
+	private getSearchElementForComponent(method: string, firstArg: string) {
 		switch (method) {
-			case 'getById': return `Component ${firstArg}`;
-			default: return '';
+			case 'getById': return new SearchConfigPropertyValue('*.component.json', 'ScriptId', firstArg);
 		}
 	}
-	private getTargetDatabase(method: string, firstArg: string) {
+	private getSearchElementForDatabase(method: string, firstArg: string) {
 		switch (method) {
-			case 'insertAsync': return `DataSource ${firstArg}`;
-			case 'selectAsync': return `DataSource ${firstArg}`;
-			case 'updateAsync': return `DataSource ${firstArg}`;
-			case 'deleteAsync': return `DataSource ${firstArg}`;
-			default: return '';
+			case 'insertAsync':
+			case 'selectAsync':
+			case 'updateAsync':
+			case 'deleteAsync': return new SearchFile(`${firstArg}.datasource.json`);
 		}
 	}
-	private getTargetLibrary(method: string, firstArg: string) {
+	private getSearchElementForLibrary(method: string, firstArg: string) {
 		switch (method) {
-			case 'getLibraryAsync': return `ScriptLibrary ${firstArg}`;
-			default: return '';
+			case 'getLibraryAsync': return new SearchFile(`${firstArg}.scriptlibrary.ts`);
 		}
+	}
+}
+
+class SearchElement {
+}
+class SearchFile extends SearchElement {
+	constructor(readonly pattern: string) {
+		super();
+	}
+}
+class SearchConfigProperty extends SearchFile {
+	constructor(readonly pattern: string, readonly propertyName: string) {
+		super(pattern);
+	}
+}
+class SearchConfigPropertyValue extends SearchConfigProperty {
+	constructor(readonly pattern: string, readonly propertyName: string, readonly value: string) {
+		super(pattern, propertyName);
 	}
 }
