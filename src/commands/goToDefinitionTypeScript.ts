@@ -14,9 +14,10 @@ export default class GoToDefinitionTypeScript {
 	}
 
 	protected async goToDefinition(document: vscode.TextDocument, position: vscode.Position) {
+		let hoverWord = document.getText(document.getWordRangeAtPosition(position, /[^'"]+/));
 		let line = document.lineAt(position.line);
 		let m = line.text.match(/\$(?<service>\w+)\s*\.\s*(?<method>\w+)\s*\(\s*['"](?<firstArg>[^"']+)['"]/);
-		if (!m || !m.groups) {
+		if (!m || !m.groups || m.groups['firstArg'] !== hoverWord) {
 			return [];
 		}
 
