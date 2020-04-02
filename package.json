@@ -3,6 +3,7 @@
 	"displayName": "Sfk.Studio",
 	"description": "",
 	"version": "1.0.1",
+	"icon": "logo.png",
 	"engines": {
 		"vscode": "^1.43.0"
 	},
