@@ -1,20 +1,22 @@
 # Change Log
-
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
 ## [Unreleased]
 
-- [GoToDefinition] : Implementation for scripts
+### Added
+- [JsonSchema]: Configuration for JSON Validation & IntelliSense
+- [GoToDefinition]: Implementation for scripts
+
+### Fixed
+- [GoToDefinition]: Activate feature only for SFK configuration files
 
 ## [1.0.1] - 2020-03-20
 
 ### Added
-
-- [GoToDefinition] : Support for DataSourceDefaultValue property
-- [GoToDefinition] : Search file in the current DeviceType otherwise in Common
+- [GoToDefinition]: Support for DataSourceDefaultValue property
+- [GoToDefinition]: Search file in the current DeviceType otherwise in Common
 
 ## [1.0.0] - 2020-03-13
-
 - [GoToDefinition]: Initial feature
 
 [Unreleased]: https://projects-dgs.divalto.com/weavy/tools/_git/vscode.sfk-studio?version=GBdevelop
