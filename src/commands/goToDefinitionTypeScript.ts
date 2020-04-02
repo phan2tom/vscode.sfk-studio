@@ -51,12 +51,14 @@ export default class GoToDefinitionTypeScript {
 		return locations;
 	}
 	private async getLocations(files: vscode.Uri[], searchProperty: core.SearchConfigPropertyValue) {
+		let configRegExp = new RegExp(`"${searchProperty.propertyName}"[ \s]*:[ \s]*"(${searchProperty.value})"`, 'g');
 		let locations = await Promise.all(
 			files.map(async (uri) => {
 				let doc = await vscode.workspace.openTextDocument(uri);
 				let content = doc.getText();
-				let index = content.search(new RegExp(`"${searchProperty.propertyName}"[ \s]*:[ \s]*"(${searchProperty.value})"`, 'g'));
-				if (index) {
+				let m = configRegExp.exec(content);
+				if (m) {
+					let index = m.index + m[0].indexOf(m[1]);
 					return new vscode.Location(uri, doc.positionAt(index));
 				}
 			})
