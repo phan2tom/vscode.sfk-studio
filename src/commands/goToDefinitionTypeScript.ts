@@ -7,29 +7,36 @@ import * as core from '../core';
 export default class GoToDefinitionTypeScript {
 
 	static async execute(document: vscode.TextDocument, position: vscode.Position) {
-			return await new GoToDefinitionTypeScript().goToDefinition(document, position);
+			if (document.uri.path.match(/\.script(library)?\.ts/)) {
+				return await new GoToDefinitionTypeScript().goToDefinition(document, position);
+			}
+			return [];
 	}
 
 	protected async goToDefinition(document: vscode.TextDocument, position: vscode.Position) {
 		let line = document.lineAt(position.line);
 		let m = line.text.match(/\$(?<service>\w+)\s*\.\s*(?<method>\w+)\s*\(\s*['"](?<firstArg>[^"']+)['"]/);
 		if (!m || !m.groups) {
-			return undefined;
+			return [];
 		}
+
+		let locations: vscode.Location[] = [];
 
 		let searchElement = this.getSearchElement(m.groups['service'], m.groups['method'], m.groups['firstArg']);
 		if (searchElement) {
 			if (searchElement instanceof core.SearchConfigPropertyValue) {
-				return await this.findFiles(document.uri, searchElement);
+				locations = await this.findFiles(document.uri, searchElement);
 			}
 			else {
 				let files = await vscode.workspace.findFiles(`**/${searchElement.pattern}`);
 				let f = GoToDefinitionConfiguration.filterCurrentDeviceType(document.uri, files);
 				if (f) {
-					return new vscode.Location(f, new vscode.Position(0, 0));
+					locations.push(new vscode.Location(f, new vscode.Position(0, 0)));
 				}
 			}
 		}
+
+		return locations;
 	}
 	private async findFiles(document: vscode.Uri, searchProperty: core.SearchConfigPropertyValue) {
 		let currentFileInfo = new core.FileInfo(document);

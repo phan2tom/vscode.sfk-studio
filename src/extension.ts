@@ -7,14 +7,8 @@ import GoToDefinitionTypeScript from './commands/goToDefinitionTypeScript';
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('sfk.studio.goToDefinitionConfiguration', GoToDefinitionConfiguration.execute),
-		vscode.languages.registerDefinitionProvider('typescript', {
-			async provideDefinition(document, position) {
-				let target = await GoToDefinitionTypeScript.execute(document, position);
-				if (target) {
-					return target;
-				}
-			}
-		})
+		vscode.languages.registerDefinitionProvider('typescript', { provideDefinition: GoToDefinitionTypeScript.execute }),
+		vscode.languages.registerImplementationProvider('typescript', { provideImplementation: GoToDefinitionTypeScript.execute })
 	);
 }
 
