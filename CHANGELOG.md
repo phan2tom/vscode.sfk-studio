@@ -1,14 +1,22 @@
 # Change Log
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
-## [Unreleased]
+## [1.1.1]
+
+### Fixed
+- [GoToDefinition]: Compatibility with generic methods
+
+## [1.1.0]
 
 ### Added
 - [JsonSchema]: Configuration for JSON Validation & IntelliSense
-- [GoToDefinition]: Implementation for scripts
+- [GoToDefinition]: Go to ScriptLibrary from TS
+- [GoToDefinition]: Go to DataSource from TS
+- [GoToDefinition]: Go to Component from TS
 
 ### Fixed
 - [GoToDefinition]: Activate feature only for SFK configuration files
+- [GoToDefinition]: Add some missing use cases
 
 ## [1.0.1] - 2020-03-20
 
@@ -19,6 +27,7 @@ All notable changes to the "sfk-studio" extension will be documented in this fil
 ## [1.0.0] - 2020-03-13
 - [GoToDefinition]: Initial feature
 
-[Unreleased]: https://projects-dgs.divalto.com/weavy/tools/_git/vscode.sfk-studio?version=GBdevelop
-[1.0.1]: https://projects-dgs.divalto.com/weavy/tools/_git/vscode.sfk-studio?version=GT1.0.1
-[1.0.0]: https://projects-dgs.divalto.com/weavy/tools/_git/vscode.sfk-studio?version=GCb6107068e738855454b2f4e681af6716a84c5f59
+[1.1.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.1
+[1.1.0]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.0
+[1.0.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.0.1
+[1.0.0]: https://github.com/phan2tom/vscode.sfk-studio/commit/b6107068e738855454b2f4e681af6716a84c5f59
