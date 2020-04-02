@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
+## [1.1.1]
+
+### Fixed
+- [GoToDefinition]: Compatibility with generic methods
+
 ## [1.1.0]
 
 ### Added
@@ -22,6 +27,7 @@ All notable changes to the "sfk-studio" extension will be documented in this fil
 ## [1.0.0] - 2020-03-13
 - [GoToDefinition]: Initial feature
 
+[1.1.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.1
 [1.1.0]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.0
 [1.0.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.0.1
 [1.0.0]: https://github.com/phan2tom/vscode.sfk-studio/commit/b6107068e738855454b2f4e681af6716a84c5f59
