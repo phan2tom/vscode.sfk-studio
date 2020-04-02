@@ -74,6 +74,7 @@ export default class GoToDefinitionTypeScript {
 			case 'component': return this.getSearchElementForComponent(method, firstArg);
 			case 'database': return this.getSearchElementForDatabase(method, firstArg);
 			case 'library': return this.getSearchElementForLibrary(method, firstArg);
+			case 'condition': return this.getSearchElementForCondition(method, firstArg);
 		}
 	}
 
@@ -83,16 +84,16 @@ export default class GoToDefinitionTypeScript {
 		}
 	}
 	private getSearchElementForDatabase(method: string, firstArg: string) {
-		switch (method) {
-			case 'insertAsync':
-			case 'selectAsync':
-			case 'updateAsync':
-			case 'deleteAsync': return new core.SearchFile(`${firstArg}.datasource.json`);
-		}
+		return new core.SearchFile(`${firstArg}.datasource.json`);
 	}
 	private getSearchElementForLibrary(method: string, firstArg: string) {
 		switch (method) {
 			case 'getLibraryAsync': return new core.SearchFile(`${firstArg}.scriptlibrary.ts`);
+		}
+	}
+	private getSearchElementForCondition(method: string, firstArg: string) {
+		switch (method) {
+			case 'setFromDataSourceAsync': return new core.SearchFile(`${firstArg}.datasource.json`);
 		}
 	}
 }
