@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+import { FileInfo } from '../core';
+
 export default class GoToDefinitionConfiguration {
 	
 	static async execute() {
@@ -152,18 +154,4 @@ class Distance {
 		public readonly symbol: vscode.DocumentSymbol,
 		public readonly distance: number
 	) { }
-}
-class FileInfo {
-	private envRegExp = /[\d.]+\\(Common|DeviceTypes)\\([^\\]+)/;
-
-	readonly environment: string | null = null;
-	readonly filePath: string | null = null;
-
-	constructor(public readonly uri: vscode.Uri) {
-		this.filePath = uri.fsPath;
-		let m = this.filePath.match(this.envRegExp);
-		if (m) {
-			this.environment = m[1] === "Common" ? m[1] : m[2];
-		}
-	}
 }

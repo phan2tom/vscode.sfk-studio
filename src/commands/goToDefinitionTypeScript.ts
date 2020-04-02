@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import GoToDefinitionConfiguration from './goToDefinitionConfiguration';
+import * as core from '../core';
 
 export default class GoToDefinitionTypeScript {
 
@@ -18,31 +19,43 @@ export default class GoToDefinitionTypeScript {
 
 		let searchElement = this.getSearchElement(m.groups['service'], m.groups['method'], m.groups['firstArg']);
 		if (searchElement) {
-			let foundFiles = await vscode.workspace.findFiles(`**/${searchElement.pattern}`);
-			if (foundFiles && foundFiles.length > 0) {
-				if (searchElement instanceof SearchConfigPropertyValue) {
-					let searchProperty = searchElement;
-					let result = await Promise.all(
-						foundFiles.map(async (uri) => {
-							let d = await vscode.workspace.openTextDocument(uri);
-							let text = d.getText();
-							let index = text.search(new RegExp(`"${searchProperty.propertyName}"[ \s]*:[ \s]*"${searchProperty.value}"`, 'g'));
-							if (index > -1) {
-								return new vscode.Location(uri, d.positionAt(index));
-							}
-						})
-					);
-					return <vscode.Location[]>result.filter(r => r);
-				}
-				else {
-					let target = GoToDefinitionConfiguration.filterCurrentDeviceType(document.uri, foundFiles);
-					if (target) {
-						return new vscode.Location(target, new vscode.Position(0, 0));
-					}
+			if (searchElement instanceof core.SearchConfigPropertyValue) {
+				return await this.findFiles(document.uri, searchElement);
+			}
+			else {
+				let files = await vscode.workspace.findFiles(`**/${searchElement.pattern}`);
+				let f = GoToDefinitionConfiguration.filterCurrentDeviceType(document.uri, files);
+				if (f) {
+					return new vscode.Location(f, new vscode.Position(0, 0));
 				}
 			}
 		}
 	}
+	private async findFiles(document: vscode.Uri, searchProperty: core.SearchConfigPropertyValue) {
+		let currentFileInfo = new core.FileInfo(document);
+		let files = await vscode.workspace.findFiles(`**/${currentFileInfo.environmentPath}/**/${searchProperty.pattern}`);
+		files = files.filter(f => path.basename(document.path).startsWith(path.basename(f.path, '.component.json')));
+		let locations = await this.getLocations(files, searchProperty);
+		if (locations.length === 0 && currentFileInfo.environment !== 'Common') {
+			files = await vscode.workspace.findFiles(`**/Common/**/${searchProperty.pattern}`);
+			locations = await this.getLocations(files, searchProperty);
+		}
+		return locations;
+	}
+	private async getLocations(files: vscode.Uri[], searchProperty: core.SearchConfigPropertyValue) {
+		let locations = await Promise.all(
+			files.map(async (uri) => {
+				let doc = await vscode.workspace.openTextDocument(uri);
+				let content = doc.getText();
+				let index = content.search(new RegExp(`"${searchProperty.propertyName}"[ \s]*:[ \s]*"(${searchProperty.value})"`, 'g'));
+				if (index) {
+					return new vscode.Location(uri, doc.positionAt(index));
+				}
+			})
+		);
+		return <vscode.Location[]>locations.filter(x => x);
+	}
+
 	private recursiveFindSymbol(propertyName: string, symbols: vscode.DocumentSymbol[]) {
 		let result = symbols.filter(s => s.name === propertyName);
 		symbols.forEach(s => result = [...result, ...this.recursiveFindSymbol(propertyName, s.children)]);
@@ -59,7 +72,7 @@ export default class GoToDefinitionTypeScript {
 
 	private getSearchElementForComponent(method: string, firstArg: string) {
 		switch (method) {
-			case 'getById': return new SearchConfigPropertyValue('*.component.json', 'ScriptId', firstArg);
+			case 'getById': return new core.SearchConfigPropertyValue('*.component.json', 'ScriptId', firstArg);
 		}
 	}
 	private getSearchElementForDatabase(method: string, firstArg: string) {
@@ -67,30 +80,12 @@ export default class GoToDefinitionTypeScript {
 			case 'insertAsync':
 			case 'selectAsync':
 			case 'updateAsync':
-			case 'deleteAsync': return new SearchFile(`${firstArg}.datasource.json`);
+			case 'deleteAsync': return new core.SearchFile(`${firstArg}.datasource.json`);
 		}
 	}
 	private getSearchElementForLibrary(method: string, firstArg: string) {
 		switch (method) {
-			case 'getLibraryAsync': return new SearchFile(`${firstArg}.scriptlibrary.ts`);
+			case 'getLibraryAsync': return new core.SearchFile(`${firstArg}.scriptlibrary.ts`);
 		}
-	}
-}
-
-class SearchElement {
-}
-class SearchFile extends SearchElement {
-	constructor(readonly pattern: string) {
-		super();
-	}
-}
-class SearchConfigProperty extends SearchFile {
-	constructor(readonly pattern: string, readonly propertyName: string) {
-		super(pattern);
-	}
-}
-class SearchConfigPropertyValue extends SearchConfigProperty {
-	constructor(readonly pattern: string, readonly propertyName: string, readonly value: string) {
-		super(pattern, propertyName);
 	}
 }
