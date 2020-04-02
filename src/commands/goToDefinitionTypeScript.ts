@@ -42,10 +42,11 @@ export default class GoToDefinitionTypeScript {
 	private async findFiles(document: vscode.Uri, searchProperty: core.SearchConfigPropertyValue) {
 		let currentFileInfo = new core.FileInfo(document);
 		let files = await vscode.workspace.findFiles(`**/${currentFileInfo.environmentPath}/**/${searchProperty.pattern}`);
-		files = files.filter(f => path.basename(document.path).startsWith(path.basename(f.path, '.component.json')));
+		files = files.filter(f => path.basename(document.path).startsWith(path.basename(f.path, searchProperty.fileExt)));
 		let locations = await this.getLocations(files, searchProperty);
 		if (locations.length === 0 && currentFileInfo.environment !== 'Common') {
 			files = await vscode.workspace.findFiles(`**/Common/**/${searchProperty.pattern}`);
+			files = files.filter(f => path.basename(document.path).startsWith(path.basename(f.path, searchProperty.fileExt)));
 			locations = await this.getLocations(files, searchProperty);
 		}
 		return locations;
@@ -83,7 +84,7 @@ export default class GoToDefinitionTypeScript {
 
 	private getSearchElementForComponent(method: string, firstArg: string) {
 		switch (method) {
-			case 'getById': return new core.SearchConfigPropertyValue('*.component.json', 'ScriptId', firstArg);
+			case 'getById': return new core.SearchConfigPropertyValue('.component.json', 'ScriptId', firstArg);
 		}
 	}
 	private getSearchElementForDatabase(method: string, firstArg: string) {

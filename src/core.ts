@@ -25,7 +25,7 @@ export class SearchFile extends SearchElement {
 	}
 }
 export class SearchConfigPropertyValue extends SearchFile {
-	constructor(readonly pattern: string, readonly propertyName: string, readonly value: string) {
-		super(pattern);
+	constructor(readonly fileExt: string, readonly propertyName: string, readonly value: string) {
+		super(`*${fileExt}`);
 	}
 }
