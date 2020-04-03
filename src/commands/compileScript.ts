@@ -8,11 +8,23 @@ import * as camelCase from 'camelcase';
 import { TextEncoder, TextDecoder } from 'util';
 
 export default class CompileScript {
-  static executeTranspile(document: vscode.TextDocument) {
+  static executeCompile(document: vscode.TextDocument) {
     let m = document.uri.fsPath.match(/\.script(library)?\.ts$/);
     if (m) {
-      new CompileScript().transpile(document, m[1] !== undefined);
+      new CompileScript().compile(document.uri, m[1] !== undefined);
     }
+  }
+  static async executeCompileAll() {
+    let compiler = new CompileScript();
+    let result = await Promise.all([
+      vscode.workspace.findFiles('**/*.script.ts'),
+      vscode.workspace.findFiles('**/*.scriptlibrary.ts')
+    ]);
+    let compileScripts = Promise.all(result[0].map(uri => compiler.compile(uri, false)));
+    let compileLibs = Promise.all(result[1].map(uri => compiler.compile(uri, true)));
+    await Promise.all([compileScripts, compileLibs]);
+    
+    vscode.window.showInformationMessage('All scripts & libraries have been compiled');
   }
   static executeLibrariesDeclaration(document: vscode.TextDocument) {
     if (document.uri.fsPath.match(/\.scriptlibrary?\.ts$/) && vscode.workspace.workspaceFolders) {
@@ -24,8 +36,8 @@ export default class CompileScript {
     files.forEach(f => new CompileScript().rename(f.oldUri, f.newUri));
   }
 
-  private async transpile(document: vscode.TextDocument, isLib: boolean) {
-    let content = document.getText();
+  private async compile(file: vscode.Uri, isLib: boolean) {
+    let content = new TextDecoder().decode(await vscode.workspace.fs.readFile(file));
     if (isLib) {
       content = `class Helper {\n${content}\n}\nreturn Helper`;
     }
@@ -35,7 +47,7 @@ export default class CompileScript {
     .runGuarded(async () => {\n${content}\n});`;
     }
 
-    let outFile = vscode.Uri.file(this.getCompiledJsFileName(document.uri.fsPath));
+    let outFile = vscode.Uri.file(this.getCompiledJsFileName(file.fsPath));
     let jsContent = ts.transpileModule(content, { compilerOptions: { target: ts.ScriptTarget.ES5 } });
     let bin = new TextEncoder().encode(jsContent.outputText);
     await vscode.workspace.fs.writeFile(outFile, bin);
