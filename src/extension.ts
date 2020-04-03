@@ -11,6 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.languages.registerDefinitionProvider('typescript', { provideDefinition: GoToDefinitionTypeScript.execute }),
 		vscode.languages.registerImplementationProvider('typescript', { provideImplementation: GoToDefinitionTypeScript.execute }),
 		vscode.workspace.onDidSaveTextDocument(CompileScript.executeTranspile),
+		vscode.workspace.onDidSaveTextDocument(CompileScript.executeLibrariesDeclaration),
 		vscode.workspace.onDidRenameFiles(CompileScript.executeRename)
 	);
 }
