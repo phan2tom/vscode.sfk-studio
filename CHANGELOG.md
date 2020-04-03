@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- [TypeScript]: Compile with SFK transform on saving
+
 ## [1.1.1]
 
 ### Fixed
