@@ -6,6 +6,9 @@ All notable changes to the "sfk-studio" extension will be documented in this fil
 ### Added
 - [TypeScript]: Compile with SFK transform on saving
 
+### Fixed
+- [TypeScript]: Rename/Move compiled JS file on TS file renaming/moving
+
 ## [1.1.1]
 
 ### Fixed

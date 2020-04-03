@@ -10,7 +10,8 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('sfk.studio.goToDefinitionConfiguration', GoToDefinitionConfiguration.execute),
 		vscode.languages.registerDefinitionProvider('typescript', { provideDefinition: GoToDefinitionTypeScript.execute }),
 		vscode.languages.registerImplementationProvider('typescript', { provideImplementation: GoToDefinitionTypeScript.execute }),
-		vscode.workspace.onDidSaveTextDocument(CompileScript.executeTranspile)
+		vscode.workspace.onDidSaveTextDocument(CompileScript.executeTranspile),
+		vscode.workspace.onDidRenameFiles(CompileScript.executeRename)
 	);
 }
 
