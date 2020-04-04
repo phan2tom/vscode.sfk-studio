@@ -15,7 +15,9 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidRenameFiles(CompileScript.executeRename)
 	);
 
-	CompileScript.executeCompileAll();
+	if (vscode.workspace.workspaceFolders) {
+		CompileScript.executeCompileAll();
+	}
 }
 
 export function deactivate() {}

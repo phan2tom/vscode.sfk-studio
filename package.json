@@ -17,7 +17,9 @@
 	"activationEvents": [
 		"onCommand:sfk.studio.goToDefinitionConfiguration",
 		"onCommand:sfk.studio.goToDefinitionTypeScript",
-		"onLanguage:typescript"
+		"onLanguage:typescript",
+		"workspaceContains:**/*.script.ts",
+		"workspaceContains:**/*.scriptlibrary.ts"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
