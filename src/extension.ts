@@ -16,8 +16,12 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	if (vscode.workspace.workspaceFolders) {
-		CompileScript.executeCompileAll();
-		CompileScript.executeLibrariesDeclaration();
+		vscode.workspace.findFiles('**/*.script{,library}.ts').then((uris) => {
+			if (uris.length > 0) {
+				CompileScript.executeCompileAll();
+				CompileScript.executeLibrariesDeclaration();
+			}
+		});
 	}
 }
 
