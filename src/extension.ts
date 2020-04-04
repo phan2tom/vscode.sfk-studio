@@ -17,6 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	if (vscode.workspace.workspaceFolders) {
 		CompileScript.executeCompileAll();
+		CompileScript.executeLibrariesDeclaration();
 	}
 }
 

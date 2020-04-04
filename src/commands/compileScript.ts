@@ -26,8 +26,8 @@ export default class CompileScript {
     
     vscode.window.showInformationMessage('All scripts & libraries have been compiled');
   }
-  static executeLibrariesDeclaration(document: vscode.TextDocument) {
-    if (document.uri.fsPath.match(/\.scriptlibrary?\.ts$/) && vscode.workspace.workspaceFolders) {
+  static executeLibrariesDeclaration(document?: vscode.TextDocument) {
+    if (document === undefined || document.uri.fsPath.match(/\.scriptlibrary?\.ts$/) && vscode.workspace.workspaceFolders) {
       new CompileScript().generateLibrariesDeclaration();
     }
   }
@@ -64,7 +64,11 @@ export default class CompileScript {
   }
 
   private async generateLibrariesDeclaration() {
-    let tmpFile = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, 'node_modules', '@types', 'sfk-script-libraries', 'index.ts'));
+    if (!vscode.workspace.workspaceFolders) {
+      return;
+    }
+
+    let tmpFile = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, 'node_modules', '@types', 'sfk-script-libraries', 'index.ts'));
     
     let concatLibs = '';
     let decoder = new TextDecoder();
