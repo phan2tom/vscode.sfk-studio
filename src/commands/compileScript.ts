@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { FileInfo } from '../core';
+import { FileInfo, FileType } from '../core';
 
 import * as ts from 'typescript';
 import * as camelCase from 'camelcase';
@@ -9,42 +9,46 @@ import { TextEncoder, TextDecoder } from 'util';
 
 export default class CompileScript {
   static executeCompile(document: vscode.TextDocument) {
-    let m = document.uri.fsPath.match(/\.script(library)?\.ts$/);
-    if (m) {
-      new CompileScript().compile(document.uri, m[1] !== undefined);
-    }
+    new CompileScript().compile(document.uri);
   }
-  static async executeCompileAll() {
+  static async executeCompileAll(files: vscode.Uri[]) {
     let compiler = new CompileScript();
-    let result = await Promise.all([
-      vscode.workspace.findFiles('**/*.script.ts'),
-      vscode.workspace.findFiles('**/*.scriptlibrary.ts')
-    ]);
-    let compileScripts = Promise.all(result[0].map(uri => compiler.compile(uri, false)));
-    let compileLibs = Promise.all(result[1].map(uri => compiler.compile(uri, true)));
-    await Promise.all([compileScripts, compileLibs]);
+    await Promise.all(files.map(uri => compiler.compile(uri)));
     
     vscode.window.showInformationMessage('All scripts & libraries have been compiled');
   }
   static executeLibrariesDeclaration(document?: vscode.TextDocument) {
-    if (document === undefined || document.uri.fsPath.match(/\.scriptlibrary?\.ts$/) && vscode.workspace.workspaceFolders) {
+    let info = FileInfo.create(document?.uri);
+    if ((document === undefined || info !== undefined && info.type === FileType.ScriptLibrary) && vscode.workspace.workspaceFolders) {
       new CompileScript().generateLibrariesDeclaration();
     }
   }
   static executeRename(e: vscode.FileRenameEvent) {
-    let files = e.files.filter(f => f.oldUri.fsPath.search(/\.script(library)?\.ts$/) > -1);
-    files.forEach(f => new CompileScript().rename(f.oldUri, f.newUri));
+    let files = e.files
+      .map(f => {
+        return { oldInfo: FileInfo.create(f.oldUri), newInfo: FileInfo.create(f.newUri) };
+      })
+      .filter(f => f.oldInfo !== undefined && (f.oldInfo.type === FileType.Script || f.oldInfo.type === FileType.ScriptLibrary));
+    files.forEach(f => new CompileScript().rename(f.oldInfo!.uri, f.newInfo!.uri));
   }
 
-  private async compile(file: vscode.Uri, isLib: boolean) {
+  private async compile(file: vscode.Uri) {
+    let info = FileInfo.create(file);
+    if (info === undefined) {
+      return;
+    }
+
     let content = new TextDecoder().decode(await vscode.workspace.fs.readFile(file));
-    if (isLib) {
+    if (info.type === FileType.ScriptLibrary) {
       content = `class Helper {\n${content}\n}\nreturn Helper`;
     }
-    else {
+    else if (info.type === FileType.Script) {
       content = `return arguments[0]
     .zone
     .runGuarded(async () => {\n${content}\n});`;
+    }
+    else {
+      return;
     }
 
     let outFile = vscode.Uri.file(this.getCompiledJsFileName(file.fsPath));
@@ -74,10 +78,10 @@ export default class CompileScript {
     let decoder = new TextDecoder();
     let libs = await vscode.workspace.findFiles('**/*.scriptlibrary.ts');
     await this.forEachAsync(libs, async (lib) => {
-      let info = new FileInfo(lib);
+      let info = FileInfo.create(lib);
       let className = camelCase(path.basename(lib.fsPath, '.scriptlibrary.ts'));
       let content = decoder.decode(await vscode.workspace.fs.readFile(lib));
-      content = `namespace ${info.environment} { export class ${className} {\n ${content} } }\n`;
+      content = `namespace ${info!.environment} { export class ${className} {\n ${content} } }\n`;
       concatLibs += content;
     });
     await vscode.workspace.fs.writeFile(tmpFile, new TextEncoder().encode(concatLibs));
