@@ -15,7 +15,14 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidRenameFiles(CompileScript.executeRename)
 	);
 
-	CompileScript.executeCompileAll();
+	if (vscode.workspace.workspaceFolders) {
+		vscode.workspace.findFiles('**/*.script{,library}.ts').then((uris) => {
+			if (uris.length > 0) {
+				CompileScript.executeCompileAll(uris);
+				CompileScript.executeLibrariesDeclaration();
+			}
+		});
+	}
 }
 
 export function deactivate() {}

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { FileInfo } from '../core';
+import { FileInfo, FileType } from '../core';
 
 export default class GoToDefinitionConfiguration {
 	
@@ -16,12 +16,12 @@ export default class GoToDefinitionConfiguration {
 	}
 
 	static filterCurrentDeviceType(currentDocument: vscode.Uri, targetDocuments: vscode.Uri[]) {
-		let currentFileInfo = new FileInfo(currentDocument);
-		let fileInfos = targetDocuments.map(uri => new FileInfo(uri));
+		let currentFileInfo = FileInfo.create(currentDocument);
+		let fileInfos = targetDocuments.map(uri => FileInfo.create(uri));
 	
-		let target = fileInfos.find(f => f.environment === currentFileInfo.environment);
+		let target = fileInfos.find(f => f!.environment === currentFileInfo!.environment);
 		if (!target) {
-			target = fileInfos.find(f => f.environment === "Common");
+			target = fileInfos.find(f => f!.environment === "Common");
 		}
 		return target?.uri;
 	}
@@ -38,13 +38,12 @@ export default class GoToDefinitionConfiguration {
 		let highlightedWord = activeTextEditor.document.getText(wordRange);
 		highlightedWord = highlightedWord.replace(/(^")|("$)/g, "");
 	
-		let currentFileName = path.basename(activeTextEditor.document.uri.fsPath);
-		let targetFileName = this.getTargetFileName(currentFileName, propertySymbol.name, highlightedWord);
+		let info = FileInfo.create(activeTextEditor.document.uri);
+		let targetFileName = this.getTargetFileName(info, propertySymbol.name, highlightedWord);
 		if (!targetFileName) {
 			return;
 		}
 		
-		let currentFileInfo = new FileInfo(activeTextEditor.document.uri);
 		let foundFiles = await vscode.workspace.findFiles(`**/${targetFileName}`);
 		if (foundFiles && foundFiles.length > 0) {
 			let target = GoToDefinitionConfiguration.filterCurrentDeviceType(activeTextEditor.document.uri, foundFiles);
@@ -85,18 +84,17 @@ export default class GoToDefinitionConfiguration {
 		return distances.filter(d => d.distance >= 0);
 	}
 
-	private getTargetFileName(currentFileName: string, propertyName: string, value: string) {
-		let m = currentFileName.match(/\.(?<configType>\w+)\.(json|ts)$/);
-		if (!m || !m.groups) {
+	private getTargetFileName(info: FileInfo | undefined, propertyName: string, value: string) {
+		if (!info) {
 			return undefined;
 		}
 	
-		switch (m.groups["configType"].toLowerCase()) {
-			case "component": return this.getTargetFileNameFromComponent(propertyName, value);
-			case "condition":
-			case "datasource": return this.getTargetFileNameFromDataSource(propertyName, value);
-			case "menu": return this.getTargetFileNameFromMenu(propertyName, value);
-			case "schema": return this.getTargetFileNameFromSchema(propertyName, value);
+		switch (info.type) {
+			case FileType.Component: return this.getTargetFileNameFromComponent(propertyName, value);
+			case FileType.Condition:
+			case FileType.DataSource: return this.getTargetFileNameFromDataSource(propertyName, value);
+			case FileType.Menu: return this.getTargetFileNameFromMenu(propertyName, value);
+			case FileType.Schema: return this.getTargetFileNameFromSchema(propertyName, value);
 			default: return undefined;
 		}
 	}
