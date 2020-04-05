@@ -21,7 +21,7 @@
 		"workspaceContains:**/*.script.ts",
 		"workspaceContains:**/*.scriptlibrary.ts"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -77,7 +77,9 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-watch": "webpack --mode development --watch",
 		"compile": "%HOME%\\AppData\\Roaming\\npm\\tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "%HOME%\\AppData\\Roaming\\npm\\tsc -watch -p ./",
@@ -96,8 +98,11 @@
 		"minimist": "^1.2.5",
 		"mkdirp": "^1.0.3",
 		"mocha": "^7.1.1",
+		"ts-loader": "^6.2.2",
 		"typescript": "^3.8.3",
-		"vscode-test": "^1.3.0"
+		"vscode-test": "^1.3.0",
+		"webpack": "^4.42.1",
+		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
 		"camelcase": "5.3.1"
