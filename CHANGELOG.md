@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
+## [1.2.0]
+
+### Added
+- [TypeScript]: Compile with SFK transform on saving
+- [TypeScript]: Generate Script Libraries Declaration files
+- [TypeScript]: Compile all on extension activation
+
+### Fixed
+- [TypeScript]: Rename/Move compiled JS file on TS file renaming/moving
+
 ## [1.1.1]
 
 ### Fixed
@@ -27,6 +37,7 @@ All notable changes to the "sfk-studio" extension will be documented in this fil
 ## [1.0.0] - 2020-03-13
 - [GoToDefinition]: Initial feature
 
+[1.2.0]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.2.0
 [1.1.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.1
 [1.1.0]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.0
 [1.0.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.0.1

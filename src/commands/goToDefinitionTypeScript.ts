@@ -7,7 +7,8 @@ import * as core from '../core';
 export default class GoToDefinitionTypeScript {
 
 	static async execute(document: vscode.TextDocument, position: vscode.Position) {
-			if (document.uri.path.match(/\.script(library)?\.ts/)) {
+			let info = core.FileInfo.create(document.uri);
+			if (info !== undefined && (info.type === core.FileType.Script || info.type === core.FileType.ScriptLibrary)) {
 				return await new GoToDefinitionTypeScript().goToDefinition(document, position);
 			}
 			return [];
@@ -40,11 +41,11 @@ export default class GoToDefinitionTypeScript {
 		return locations;
 	}
 	private async findFiles(document: vscode.Uri, searchProperty: core.SearchConfigPropertyValue) {
-		let currentFileInfo = new core.FileInfo(document);
-		let files = await vscode.workspace.findFiles(`**/${currentFileInfo.environmentPath}/**/${searchProperty.pattern}`);
+		let currentFileInfo = core.FileInfo.create(document);
+		let files = await vscode.workspace.findFiles(`**/${currentFileInfo!.environmentPath}/**/${searchProperty.pattern}`);
 		files = files.filter(f => path.basename(document.path).startsWith(path.basename(f.path, searchProperty.fileExt)));
 		let locations = await this.getLocations(files, searchProperty);
-		if (locations.length === 0 && currentFileInfo.environment !== 'Common') {
+		if (locations.length === 0 && currentFileInfo!.environment !== 'Common') {
 			files = await vscode.workspace.findFiles(`**/Common/**/${searchProperty.pattern}`);
 			files = files.filter(f => path.basename(document.path).startsWith(path.basename(f.path, searchProperty.fileExt)));
 			locations = await this.getLocations(files, searchProperty);
