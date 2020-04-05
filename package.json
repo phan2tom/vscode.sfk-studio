@@ -77,7 +77,6 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "webpack --mode production",
 		"webpack": "webpack --mode development",
 		"webpack-watch": "webpack --mode development --watch",
 		"compile": "%HOME%\\AppData\\Roaming\\npm\\tsc -p ./",
