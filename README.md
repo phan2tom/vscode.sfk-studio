@@ -43,6 +43,7 @@ Such as:
 - `$condition.setFromDataSourceAsync('datasourceId', ...)` => Opens the `datasourceId` DataSource
 
 ### 3. Completion
+- A default declaration is available in `./node_modules/@types/sfk-script/index.d.ts` for standard elements
 - A TypeScript Declaration is generated for all the available ScriptLibrary
 - The class name is the ScriptLibrary name in Camel Case (eg: `helper.date` => `helperDate`)
 - Each DeviceType is represented by a namespace with the same name:  
