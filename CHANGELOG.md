@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
+## [1.2.1]
+
+### Added
+- [JsonSchema]: Associate configuration files to JSON with Comments (`jsonc`)
+- [TypeScript]: Deploy a default declaration for standard elements
+
 ## [1.2.0]
 
 ### Added
@@ -37,6 +43,7 @@ All notable changes to the "sfk-studio" extension will be documented in this fil
 ## [1.0.0] - 2020-03-13
 - [GoToDefinition]: Initial feature
 
+[1.2.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.2.1
 [1.2.0]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.2.0
 [1.1.1]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.1
 [1.1.0]: https://github.com/phan2tom/vscode.sfk-studio/releases/tag/1.1.0
