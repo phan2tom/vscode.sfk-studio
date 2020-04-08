@@ -49,6 +49,19 @@
 				"command": "sfk.studio.goToDefinitionConfiguration"
 			}
 		],
+		"languages": [
+			{
+				"id": "jsonc",
+				"filenamePatterns": [
+					"*.component.json",
+					"*.condition.json",
+					"*.datasource.json",
+					"*.menu.json",
+					"*.projectsettings.json",
+					"*.schema.json"
+				]
+			}
+		],
 		"jsonValidation": [
 			{
 				"fileMatch": "*.component.json",
