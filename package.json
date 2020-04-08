@@ -2,7 +2,7 @@
 	"name": "sfk-studio",
 	"displayName": "Sfk.Studio",
 	"description": "",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"icon": "logo.png",
 	"engines": {
 		"vscode": "^1.43.0"
@@ -47,6 +47,19 @@
 				"when": "resourceFilename =~ /\\.(component|condition|datasource|menu|projectsettings|schema)\\.json$/",
 				"key": "ctrl+f12",
 				"command": "sfk.studio.goToDefinitionConfiguration"
+			}
+		],
+		"languages": [
+			{
+				"id": "jsonc",
+				"filenamePatterns": [
+					"*.component.json",
+					"*.condition.json",
+					"*.datasource.json",
+					"*.menu.json",
+					"*.projectsettings.json",
+					"*.schema.json"
+				]
 			}
 		],
 		"jsonValidation": [

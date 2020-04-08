@@ -6,6 +6,7 @@ import { FileInfo, FileType } from '../core';
 import * as ts from 'typescript';
 import * as camelCase from 'camelcase';
 import { TextEncoder, TextDecoder } from 'util';
+import { fstat, exists } from 'fs';
 
 export default class CompileScript {
   static executeCompile(document: vscode.TextDocument) {
@@ -30,6 +31,15 @@ export default class CompileScript {
       })
       .filter(f => f.oldInfo !== undefined && (f.oldInfo.type === FileType.Script || f.oldInfo.type === FileType.ScriptLibrary));
     files.forEach(f => new CompileScript().rename(f.oldInfo!.uri, f.newInfo!.uri));
+  }
+  static executeEnsureStandardDeclaration(sourceFilePath: string) {
+    if (!vscode.workspace.workspaceFolders) {
+      return;
+    }
+
+    let sourceFile = vscode.Uri.file(sourceFilePath);
+    let targetFile = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, 'node_modules', '@types', 'sfk-script', 'index.d.ts'));
+    vscode.workspace.fs.copy(sourceFile, targetFile, { overwrite: false }).then(() => {}, (reason) => {});
   }
 
   private async compile(file: vscode.Uri) {

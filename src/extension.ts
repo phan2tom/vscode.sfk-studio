@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 			if (uris.length > 0) {
 				CompileScript.executeCompileAll(uris);
 				CompileScript.executeLibrariesDeclaration();
+				CompileScript.executeEnsureStandardDeclaration(context.asAbsolutePath('dist/@types/sfk-script/index.d.ts'));
 			}
 		});
 	}
