@@ -18,8 +18,7 @@
 		"onCommand:sfk.studio.goToDefinitionConfiguration",
 		"onCommand:sfk.studio.goToDefinitionTypeScript",
 		"onLanguage:typescript",
-		"workspaceContains:**/*.script.ts",
-		"workspaceContains:**/*.scriptlibrary.ts"
+		"workspaceContains:**/*.script*.ts"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
