@@ -9,6 +9,8 @@ import { TextEncoder, TextDecoder } from 'util';
 import { fstat, exists } from 'fs';
 
 export default class CompileScript {
+  static projectFolder: string;
+
   static executeCompile(document: vscode.TextDocument) {
     new CompileScript().compile(document.uri);
   }
@@ -33,12 +35,8 @@ export default class CompileScript {
     files.forEach(f => new CompileScript().rename(f.oldInfo!.uri, f.newInfo!.uri));
   }
   static executeEnsureStandardDeclaration(sourceFilePath: string) {
-    if (!vscode.workspace.workspaceFolders) {
-      return;
-    }
-
     let sourceFile = vscode.Uri.file(sourceFilePath);
-    let targetFile = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, 'node_modules', '@types', 'sfk-script', 'index.d.ts'));
+    let targetFile = vscode.Uri.file(path.join(CompileScript.projectFolder, 'node_modules', '@types', 'sfk-script', 'index.d.ts'));
     vscode.workspace.fs.copy(sourceFile, targetFile, { overwrite: false }).then(() => {}, (reason) => {});
   }
 
@@ -77,13 +75,9 @@ export default class CompileScript {
     }
   }
 
-  private async generateLibrariesDeclaration() {
-    if (!vscode.workspace.workspaceFolders) {
-      return;
-    }
+  public async generateLibrariesDeclaration() {
+    let tmpFile = vscode.Uri.file(path.join(CompileScript.projectFolder, 'node_modules', '@types', 'sfk-script-libraries', 'index.ts'));
 
-    let tmpFile = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, 'node_modules', '@types', 'sfk-script-libraries', 'index.ts'));
-    
     let concatLibs = '';
     let decoder = new TextDecoder();
     let libs = await vscode.workspace.findFiles('**/*.scriptlibrary.ts');

@@ -2,7 +2,7 @@
 	"name": "sfk-studio",
 	"displayName": "Sfk.Studio",
 	"description": "",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"icon": "logo.png",
 	"engines": {
 		"vscode": "^1.43.0"
@@ -18,8 +18,7 @@
 		"onCommand:sfk.studio.goToDefinitionConfiguration",
 		"onCommand:sfk.studio.goToDefinitionTypeScript",
 		"onLanguage:typescript",
-		"workspaceContains:**/*.script.ts",
-		"workspaceContains:**/*.scriptlibrary.ts"
+		"workspaceContains:**/*.script*.ts"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {

@@ -99,9 +99,10 @@ export default class GoToDefinitionConfiguration {
 		}
 	}
 	private getTargetFileNameFromComponent(propertyName: string, value: string) {
+		if (propertyName.search(/datasource/i) > -1) {
+			return `${value}.datasource.json`;
+		}
 		switch (propertyName.toLowerCase()) {
-			case "datasource":
-			case "datasourcedefaultvalue": return `${value}.datasource.json`;
 			case "script": return `${value}.script.ts`;
 			case "template": return `${value}.template.html`;
 			case "target": return this.getLinkTargetFileName(value);
@@ -124,8 +125,10 @@ export default class GoToDefinitionConfiguration {
 		}
 	}
 	private getTargetFileNameFromSchema(propertyName: string, value: string) {
+		if (propertyName.search(/datasource/i) > -1) {
+			return `${value}.datasource.json`;
+		}
 		switch (propertyName.toLowerCase()) {
-			case "datasource": return `${value}.datasource.json`;
 			case "foreignconfigname": return `${value}.component.json`;
 			case "targettable": return `${value}.schema.json`;
 			default: return undefined;
