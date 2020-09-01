@@ -1,0 +1,58 @@
+{
+    "iconDefinitions": {
+        "_folder": {
+            "iconPath": "./images/folder.svg"
+        },
+        "_component": {
+            "iconPath": "./images/component.svg"
+        },
+        "_condition": {
+            "iconPath": "./images/condition.svg"
+        },
+        "_datasource": {
+            "iconPath": "./images/datasource.svg"
+        },
+        "_menu": {
+            "iconPath": "./images/menu.svg"
+        },
+        "_projectsettings": {
+            "iconPath": "./images/projectSettings.svg"
+        },
+        "_schema": {
+            "iconPath": "./images/schema.svg"
+        },
+        "_script": {
+            "iconPath": "./images/script.svg"
+        },
+        "_scriptlibrary": {
+            "iconPath": "./images/scriptLibrary.svg"
+        },
+        "_sql": {
+            "iconPath": "./images/sql.svg"
+        },
+        "_template": {
+            "iconPath": "./images/template.svg"
+        }
+	},
+	"folder": "_folder",
+	"fileExtensions": {
+        // icons by file extension
+        "component.json": "_component",
+        "condition.json": "_condition",
+        "datasource.json": "_datasource",
+        "menu.json": "_menu",
+        "projectsettings.json": "_projectsettings",
+        "schema.json": "_schema",
+        "script.ts": "_script",
+        "scriptlibrary.ts": "_scriptlibrary",
+        "sql.sql": "_sql",
+        "template.html": "_template",
+        "compiled.js": "invisible",
+    },
+	"fileNames": {
+		// icons by file name
+	},
+	"languageIds": {
+		// icons by language id
+	},
+}

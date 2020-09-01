@@ -86,6 +86,13 @@
 				"fileMatch": "*.schema.json",
 				"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/schema.json"
 			}
+		],
+		"iconThemes": [
+			{
+				"id": "Sfk.Studio",
+				"label": "Sfk.Studio",
+				"path": "./iconTheme/sfk-studio-icon-theme.json"
+			}
 		]
 	},
 	"scripts": {
