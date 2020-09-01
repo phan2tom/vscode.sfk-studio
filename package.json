@@ -2,7 +2,7 @@
 	"name": "sfk-studio",
 	"displayName": "Sfk.Studio",
 	"description": "",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"icon": "logo.png",
 	"engines": {
 		"vscode": "^1.43.0"
@@ -85,6 +85,13 @@
 			{
 				"fileMatch": "*.schema.json",
 				"url": "https://projects-dgs.divalto.com/_static/sfk/jsonschemas/schema.json"
+			}
+		],
+		"iconThemes": [
+			{
+				"id": "Sfk.Studio",
+				"label": "Sfk.Studio",
+				"path": "./iconTheme/sfk-studio-icon-theme.json"
 			}
 		]
 	},
