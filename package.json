@@ -93,6 +93,12 @@
 				"label": "Sfk.Studio",
 				"path": "./iconTheme/sfk-studio-icon-theme.json"
 			}
+		],
+		"snippets": [
+			{
+				"language": "typescript",
+				"path": "./snippets/sfk.json"
+			}
 		]
 	},
 	"scripts": {
