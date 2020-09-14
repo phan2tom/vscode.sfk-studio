@@ -1,0 +1,20 @@
+{
+  "Script body": {
+    "description": "Body of a SFK script to prevent from VS Code TS syntaxes errors",
+    "prefix": ["sfk-script"],
+    "body": [
+      "await (async () => {",
+      "\t$0",
+      "})();"
+    ]
+  },
+  "ScriptLibrary method": {
+    "description": "Body of a SFK script library to prevent from VS Code TS syntaxes errors",
+    "prefix": ["sfk-library-method"],
+    "body": [
+      "const ${1:methodName} = ${2:async} (${3:arguments}) => {",
+      "\t$0",
+      "};"
+    ]
+  }
+}
