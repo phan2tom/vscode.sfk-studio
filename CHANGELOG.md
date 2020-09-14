@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to the "sfk-studio" extension will be documented in this file.
 
+## [1.2.5]
+
+### Added
+- [TypeScript]: Add some useful snippets to prevent from some vscode syntaxes errors
+### Changed
+- [TypeScript]: Complete some missong standard definitions
+- Update old dependencies
+
 ## [1.2.4]
 
 ### Added
