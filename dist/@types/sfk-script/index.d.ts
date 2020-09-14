@@ -961,6 +961,7 @@ declare class TreeviewEvents extends FieldEvents {
 declare class VariableService {
   get(name?: string): any;
   set(name?: string, value?: any, asQueryParam?: boolean): void;
+  tryGet(name?: string): any;
 }
 declare class TableJoin {
   text?: string;
@@ -1123,6 +1124,7 @@ declare const $sender: any;
 
 declare class ComponentService {
   getById<T extends any>(componentId: string): T;
+  tryGetById<T extends any>(componentId: string): T;
 }
 declare const $component: ComponentService;
 
@@ -1141,6 +1143,9 @@ declare class ParametersDef {
   newId: number;
   currentId: number;
   data: { [key: string]: any };
+  field: string;
+  row: { [key: string]: any };
+  previousValues: { [key: string]: any };
 }
 declare const $parameters: ParametersDef;
                 
